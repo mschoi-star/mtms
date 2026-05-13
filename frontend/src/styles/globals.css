@@ -1,0 +1,43 @@
+:root {
+  --bg: #ffffff;
+  --ink: #1f2430;
+  --ink-soft: #4a5160;
+  --line: #e6e3dd;
+  --line-strong: #d6d1c5;
+  --warm: #c8a57a;
+  --warm-soft: #ecdfca;
+  --warm-deep: #8a6a44;
+  --shadow: 0 1px 0 rgba(31, 36, 48, 0.04), 0 10px 30px -12px rgba(31, 36, 48, 0.18);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}

@@ -1,0 +1,9 @@
+# 개발 오버라이드: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# 백엔드 코드 변경 시 자동 재로드, 소스 볼륨 마운트 활성화
+services:
+  backend:
+    volumes:
+      - ../backend:/app
+    environment:
+      DEBUG: "true"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
