@@ -1,0 +1,148 @@
+{
+  "project": "mtms",
+  "lastUpdated": "2026-05-14",
+  "version": "0.2.0",
+  "architecture": "Clean Architecture",
+  "repository": "https://github.com/mschoi-star/mtms",
+  "stack": {
+    "frontend": {
+      "framework": "React 18 + TypeScript",
+      "bundler": "Vite 5",
+      "routing": "react-router-dom 6",
+      "http": "axios",
+      "port": 3000
+    },
+    "backend": {
+      "framework": "FastAPI 0.115",
+      "server": "Uvicorn (--workers 2)",
+      "orm": "SQLAlchemy 2",
+      "migrations": "Alembic 1.13.3",
+      "validation": "Pydantic 2",
+      "auth": "python-jose JWT (8h) + passlib[bcrypt] bcrypt==4.0.1",
+      "port": 8000
+    },
+    "database": {
+      "engine": "PostgreSQL 16",
+      "name": "lgedb",
+      "port": 5432,
+      "volume": "docker_pg_data (named, persistent)",
+      "extensions": ["uuid-ossp"]
+    },
+    "infra": {
+      "containerization": "Docker / docker-compose",
+      "proxy": "nginx 1.27-alpine (reverse proxy /api/ → backend:8000)"
+    }
+  },
+  "layers": {
+    "domain": {
+      "path": "backend/app/domain",
+      "status": "scaffolded",
+      "contents": ["entities/", "repositories/"]
+    },
+    "application": {
+      "path": "backend/app/application",
+      "status": "scaffolded",
+      "contents": ["use_cases/"]
+    },
+    "infrastructure": {
+      "path": "backend/app/infrastructure",
+      "status": "complete",
+      "contents": [
+        "database/session.py",
+        "database/models.py (7 tables, description/project_id 컬럼 추가)",
+        "database/seed.py",
+        "repositories/"
+      ]
+    },
+    "interfaces": {
+      "path": "backend/app/interfaces",
+      "status": "complete",
+      "contents": ["api/v1/ (7 routers)", "schemas/"]
+    }
+  },
+  "phases": {
+    "phase1_frontend_scaffold": {
+      "status": "complete",
+      "description": "React 18 + TypeScript + Vite 5 프로젝트 설정, 디자인 시스템"
+    },
+    "phase2_design_system": {
+      "status": "complete",
+      "description": "ink(#1f2430) / warm(#c8a57a) / bg(#ffffff) 3색 팔레트, JetBrains Mono + Inter + Noto Sans KR"
+    },
+    "phase3_layout": {
+      "status": "complete",
+      "description": "Sidebar(116px) + BrowserWindow + MenuBar(28px) 레이아웃"
+    },
+    "phase4_apps": {
+      "status": "complete",
+      "description": "8개 앱 모듈 (Dashboard, Projects, Reports, Schedule, Inbox, Team, Files, Settings) + 햄스터 SVG 애니메이션"
+    },
+    "phase5_backend_api": {
+      "status": "complete",
+      "description": "FastAPI 7개 엔드포인트 (/auth, /projects, /reports, /schedule, /inbox, /team, /files), JWT 인증"
+    },
+    "phase6_migrations": {
+      "status": "complete",
+      "description": "Alembic migrations/versions/001_initial.py — 7개 테이블 생성, 002 content 컬럼, 003 description/project_id FK 추가"
+    },
+    "phase7_integration": {
+      "status": "complete",
+      "description": "프론트↔백엔드 연결 (api.ts baseURL=/api/v1, Bearer 토큰 인터셉터, 모든 앱 실 API 호출)"
+    },
+    "phase8_docker": {
+      "status": "complete",
+      "description": "Docker Compose 3컨테이너 (db, backend, frontend/nginx), entrypoint.sh로 race condition 해결"
+    },
+    "phase9_git": {
+      "status": "complete",
+      "description": "git init, .gitignore, 첫 커밋(b00e32a, 91 files), GitHub push → https://github.com/mschoi-star/mtms"
+    },
+    "phase10_projects_management": {
+      "status": "complete",
+      "description": "Projects 앱 전면 재구현: 좌우 패널 레이아웃, 프로젝트 생성/삭제/상세편집(description, progress, status), 프로젝트별 일일업무 보고 목록 표시. Reports 앱에 프로젝트 선택 드롭다운 추가. DB migration 003 (Project.description, Report.project_id FK)"
+    }
+  },
+  "bugs_fixed": [
+    {
+      "issue": "bcrypt 5.x passlib 호환성",
+      "fix": "requirements.txt에 bcrypt==4.0.1 고정"
+    },
+    {
+      "issue": "uvicorn --workers 2 startup race condition",
+      "fix": "entrypoint.sh에서 migration → seed → uvicorn 순차 실행, main.py startup 핸들러 제거"
+    },
+    {
+      "issue": "Vite dev 서버 포트 3000 충돌",
+      "fix": "Docker 구동 전 Vite 프로세스 종료 필요 (lsof -i :3000)"
+    },
+    {
+      "issue": "files_repo.py 이중 슬래시 버그",
+      "fix": "prefix = path.rstrip('/') + '/' 로 수정 (root '/' 처리)"
+    },
+    {
+      "issue": "seed.py 디렉터리 name에 슬래시 포함",
+      "fix": "/projects → projects 등 leading slash 제거"
+    },
+    {
+      "issue": "Docker 캐시로 인한 프론트엔드 구버전 서빙",
+      "fix": "docker compose build --no-cache frontend 후 컨테이너 재시작"
+    }
+  ],
+  "seed_accounts": [
+    { "email": "kim.s@mpse-cae.com", "password": "password" },
+    { "email": "lee.j@mpse-cae.com", "password": "password" },
+    { "email": "park.h@mpse-cae.com", "password": "password" },
+    { "email": "choi.m@mpse-cae.com", "password": "password" },
+    { "email": "jung.y@mpse-cae.com", "password": "password" },
+    { "email": "ahn.g@mpse-cae.com", "password": "password" }
+  ],
+  "current_state": {
+    "containers": [
+      "docker-db-1 (postgres:16, healthy)",
+      "docker-backend-1 (port 8000)",
+      "docker-frontend-1 (nginx, port 3000)"
+    ],
+    "url": "http://localhost:3000",
+    "all_apps_verified": true
+  }
+}

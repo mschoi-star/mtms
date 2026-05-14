@@ -28,18 +28,34 @@ export interface ProjectOut {
   code: string;
   name: string;
   team: string;
+  description: string | null;
   progress: number;
   status: string;
   created_at: string;
   updated_at: string;
 }
 
+export interface ProjectCreate {
+  code: string;
+  name: string;
+  team?: string;
+  description?: string;
+}
+
 export interface ReportOut {
   id: string;
   code: string;
   title: string;
+  content: string | null;
   status: string;
+  project_id: string | null;
   created_at: string;
+}
+
+export interface ReportCreate {
+  title: string;
+  content?: string;
+  project_id?: string;
 }
 
 export interface ScheduleEventOut {

@@ -1,6 +1,6 @@
 import uuid
 from datetime import date, datetime, timezone
-from sqlalchemy import Boolean, Column, Date, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from app.infrastructure.database.session import Base
 
@@ -29,6 +29,7 @@ class Project(Base):
     code = Column(String(20), unique=True, nullable=False)
     name = Column(String(200), nullable=False)
     team = Column(String(50), default="")
+    description = Column(Text, nullable=True)
     progress = Column(Integer, default=0)
     status = Column(String(30), default="active")
     created_at = Column(DateTime(timezone=True), default=_now)
@@ -41,7 +42,9 @@ class Report(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     code = Column(String(20), unique=True, nullable=False)
     title = Column(String(200), nullable=False)
+    content = Column(Text, nullable=True)
     status = Column(String(20), default="draft")
+    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime(timezone=True), default=_now)
 
 

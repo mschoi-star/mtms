@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type {
-  ProjectOut, ReportOut, ScheduleEventOut,
+  ProjectOut, ProjectCreate, ReportOut, ReportCreate, ScheduleEventOut,
   MessageOut, TeamMemberOut, FileEntryOut,
 } from '../types';
 
@@ -54,14 +54,18 @@ export const authApi = {
 
 export const projectsApi = {
   list: () => api.get<ProjectOut[]>('/projects'),
-  update: (id: string, data: { status?: string; progress?: number; name?: string; team?: string }) =>
+  create: (data: ProjectCreate) => api.post<ProjectOut>('/projects', data),
+  update: (id: string, data: { name?: string; team?: string; description?: string; progress?: number; status?: string }) =>
     api.patch<ProjectOut>(`/projects/${id}`, data),
+  delete: (id: string) => api.delete(`/projects/${id}`),
 };
 
 // ── Reports ───────────────────────────────────────────────────────
 
 export const reportsApi = {
-  list: () => api.get<ReportOut[]>('/reports'),
+  list: (projectId?: string) =>
+    api.get<ReportOut[]>('/reports', projectId ? { params: { project_id: projectId } } : undefined),
+  create: (data: ReportCreate) => api.post<ReportOut>('/reports', data),
 };
 
 // ── Schedule ──────────────────────────────────────────────────────
