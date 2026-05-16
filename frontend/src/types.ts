@@ -54,6 +54,8 @@ export interface ProjectUpdate {
   status?: ProjectStatus;
 }
 
+export type ReportStatus = 'draft' | 'submitted' | 'approved' | 'rejected';
+
 export interface ReportOut {
   id: string;
   code: string;
@@ -63,7 +65,7 @@ export interface ReportOut {
   done: string | null;
   issue: string | null;
   next_plan: string | null;
-  status: string;
+  status: ReportStatus;
   project_id: string | null;
   author_email: string | null;
   author_name: string | null;
@@ -85,7 +87,9 @@ export interface ReportCreate {
   next_plan?: string;
 }
 
-export interface ReportUpdate extends Partial<ReportCreate> {}
+export interface ReportUpdate extends Partial<Omit<ReportCreate, 'project_id'>> {
+  project_id?: string | null;
+}
 
 export interface ScheduleEventOut {
   id: string;
