@@ -13,6 +13,19 @@ def get_by_id(db: Session, project_id: UUID) -> Optional[Project]:
     return db.query(Project).filter(Project.id == project_id).first()
 
 
+def get_by_code(db: Session, code: str) -> Optional[Project]:
+    return db.query(Project).filter(Project.code == code).first()
+
+
+def next_code(db: Session) -> str:
+    max_number = 0
+    for (code,) in db.query(Project.code).filter(Project.code.like("PRJ-%")).all():
+        suffix = code.removeprefix("PRJ-")
+        if suffix.isdigit():
+            max_number = max(max_number, int(suffix))
+    return f"PRJ-{max_number + 1:03d}"
+
+
 def create(db: Session, data: ProjectCreate) -> Project:
     project = Project(**data.model_dump())
     db.add(project)

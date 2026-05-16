@@ -25,7 +25,7 @@ def seed(db: Session) -> None:
         Project(code="PRJ-219", name="Meshing benchmarks",     team="QA",  progress=34,  status="active"),
         Project(code="PRJ-201", name="Solver migration",       team="Eng", progress=68,  status="active"),
         Project(code="PRJ-188", name="Topology optimization",  team="R&D", progress=91,  status="in review"),
-        Project(code="PRJ-176", name="Field equation library", team="R&D", progress=100, status="closed"),
+        Project(code="PRJ-176", name="Field equation library", team="R&D", progress=100, status="complete"),
         Project(code="PRJ-211", name="Cluster scheduler",      team="Ops", progress=22,  status="active"),
     ]
     db.add_all(projects)

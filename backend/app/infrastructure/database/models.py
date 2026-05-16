@@ -1,6 +1,6 @@
 import uuid
 from datetime import date, datetime, timezone
-from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, CheckConstraint, Column, Date, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from app.infrastructure.database.session import Base
 
@@ -24,6 +24,13 @@ class User(Base):
 
 class Project(Base):
     __tablename__ = "projects"
+    __table_args__ = (
+        CheckConstraint("progress >= 0 AND progress <= 100", name="ck_projects_progress_range"),
+        CheckConstraint(
+            "status IN ('active', 'in review', 'on hold', 'complete')",
+            name="ck_projects_status_allowed",
+        ),
+    )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     code = Column(String(20), unique=True, nullable=False)
@@ -43,8 +50,18 @@ class Report(Base):
     code = Column(String(20), unique=True, nullable=False)
     title = Column(String(200), nullable=False)
     content = Column(Text, nullable=True)
+    summary = Column(Text, nullable=True)
+    done = Column(Text, nullable=True)
+    issue = Column(Text, nullable=True)
+    next_plan = Column(Text, nullable=True)
     status = Column(String(20), default="draft")
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True)
+    author_email = Column(String(255), default="")
+    author_name = Column(String(100), default="")
+    work_date = Column(Date, default=date.today)
+    review_comment = Column(Text, nullable=True)
+    submitted_at = Column(DateTime(timezone=True), nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=_now)
 
 

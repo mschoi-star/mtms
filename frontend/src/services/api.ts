@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type {
-  ProjectOut, ProjectCreate, ReportOut, ReportCreate, ScheduleEventOut,
-  MessageOut, TeamMemberOut, FileEntryOut,
+  ProjectOut, ProjectCreate, ReportOut, ReportCreate, ReportUpdate, ScheduleEventOut,
+  ScheduleEventCreate, MessageOut, TeamMemberOut, FileEntryOut, DashboardSummary, ProjectUpdate,
 } from '../types';
 
 const TOKEN_KEY = 'mtms_token';
@@ -41,7 +41,6 @@ api.interceptors.request.use((config) => {
 });
 
 // ── Auth ─────────────────────────────────────────────────────────
-
 export const authApi = {
   login: (email: string, password: string) =>
     api.post<{ access_token: string; user_email: string; user_name: string }>(
@@ -50,12 +49,17 @@ export const authApi = {
     ),
 };
 
+// ── Dashboard ────────────────────────────────────────────────────
+export const dashboardApi = {
+  summary: () => api.get<DashboardSummary>('/dashboard/summary'),
+};
+
 // ── Projects ──────────────────────────────────────────────────────
 
 export const projectsApi = {
   list: () => api.get<ProjectOut[]>('/projects'),
   create: (data: ProjectCreate) => api.post<ProjectOut>('/projects', data),
-  update: (id: string, data: { name?: string; team?: string; description?: string; progress?: number; status?: string }) =>
+  update: (id: string, data: ProjectUpdate) =>
     api.patch<ProjectOut>(`/projects/${id}`, data),
   delete: (id: string) => api.delete(`/projects/${id}`),
 };
@@ -66,6 +70,11 @@ export const reportsApi = {
   list: (projectId?: string) =>
     api.get<ReportOut[]>('/reports', projectId ? { params: { project_id: projectId } } : undefined),
   create: (data: ReportCreate) => api.post<ReportOut>('/reports', data),
+  update: (id: string, data: ReportUpdate) => api.patch<ReportOut>(`/reports/${id}`, data),
+  delete: (id: string) => api.delete(`/reports/${id}`),
+  submit: (id: string) => api.post<ReportOut>(`/reports/${id}/submit`),
+  approve: (id: string, comment?: string) => api.post<ReportOut>(`/reports/${id}/approve`, { comment }),
+  reject: (id: string, comment?: string) => api.post<ReportOut>(`/reports/${id}/reject`, { comment }),
 };
 
 // ── Schedule ──────────────────────────────────────────────────────
@@ -73,6 +82,7 @@ export const reportsApi = {
 export const scheduleApi = {
   getWeek: (weekStart: string) =>
     api.get<ScheduleEventOut[]>('/schedule', { params: { week: weekStart } }),
+  create: (data: ScheduleEventCreate) => api.post<ScheduleEventOut>('/schedule', data),
 };
 
 // ── Inbox ─────────────────────────────────────────────────────────
